@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { connect } from "react-redux";
+import ToDo from "../components/ToDo";
+import { actionCreators } from "../store";
 
-export default function Home() {
+function Home({ toDos, addToDo }) {
   const [text, setText] = useState("");
 
   const onChange = (e) => {
@@ -9,7 +12,7 @@ export default function Home() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log(text);
+    addToDo(text);
     setText("");
   };
 
@@ -20,7 +23,24 @@ export default function Home() {
         <input type="text" value={text} onChange={onChange} required />
         <button>Add</button>
       </form>
-      <ul></ul>
+      <ul>
+        {toDos.map((toDo) => (
+          <ToDo {...toDo} key={toDo.id} />
+        ))}
+      </ul>
     </>
   );
 }
+
+// same as store.getState()
+function mapStateToProps(state, ownProps) {
+  return { toDos: state };
+}
+
+// same as store.dispatch()
+function mapDispatchToProps(dispatch, ownProps) {
+  return { addToDo: (text) => dispatch(actionCreators.addToDo(text)) };
+}
+
+// connect(mapStateToProps(state, ownProps))(Component) - basically send state and dispatch to this component
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
