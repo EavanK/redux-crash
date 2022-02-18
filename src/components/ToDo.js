@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { actionCreators } from "../store";
+import { remove } from "../store";
 
 function ToDo({ text, onBtnClick, id }) {
   return (
@@ -13,7 +13,7 @@ function ToDo({ text, onBtnClick, id }) {
 
 // same as store.dispatch()
 function mapDispatchToProps(dispatch, ownProps) {
-  return { onBtnClick: () => dispatch(actionCreators.deleteToDo(ownProps.id)) };
+  return { onBtnClick: () => dispatch(remove(ownProps.id)) };
 }
 
 // connect(mapStateToProps(state, ownProps))(Component) - basically send state and dispatch to this component

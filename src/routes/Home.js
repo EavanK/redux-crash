@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { connect } from "react-redux";
 import ToDo from "../components/ToDo";
-import { actionCreators } from "../store";
+import { add } from "../store";
 
 function Home({ toDos, addToDo }) {
   const [text, setText] = useState("");
@@ -39,7 +39,7 @@ function mapStateToProps(state, ownProps) {
 
 // same as store.dispatch()
 function mapDispatchToProps(dispatch, ownProps) {
-  return { addToDo: (text) => dispatch(actionCreators.addToDo(text)) };
+  return { addToDo: (text) => dispatch(add(text)) };
 }
 
 // connect(mapStateToProps(state, ownProps))(Component) - basically send state and dispatch to this component
