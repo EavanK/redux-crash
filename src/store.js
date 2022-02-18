@@ -1,5 +1,39 @@
 import { createStore } from "redux";
-import { createAction, createReducer } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  createAction,
+  createReducer,
+  createSlice,
+} from "@reduxjs/toolkit";
+
+const toDoStorage = JSON.parse(localStorage.getItem("ToDoList")) || [];
+
+//------------------code after using createSlice from redux/toolkit (refactored)----------------//
+
+// using createSlice function, we can reduce more lines of code
+const toDos = createSlice({
+  name: "toDosReducer",
+  initialState: toDoStorage,
+  reducers: {
+    add: (state, action) => {
+      state.unshift({ text: action.payload, id: Date.now() });
+      localStorage.setItem("ToDoList", JSON.stringify(state));
+    },
+    remove: (state, action) => {
+      const filteredToDo = state.filter((toDo) => toDo.id !== action.payload);
+      filteredToDo.length
+        ? localStorage.setItem("ToDoList", JSON.stringify(filteredToDo))
+        : localStorage.removeItem("ToDoList");
+      return filteredToDo;
+    },
+  },
+});
+
+export const { add, remove } = toDos.actions;
+
+export default configureStore({ reducer: toDos.reducer });
+
+//-------------------code before using redux/toolkit and also createSlice from redux/toolkit -------------------//
 
 // const ADD = "ADD";
 // const DELETE = "DELETE";
@@ -12,12 +46,13 @@ import { createAction, createReducer } from "@reduxjs/toolkit";
 //   return { type: DELETE, id };
 // };
 
+/********************redux/toolkit********************
 // using createAction toolkit we can write less lines of code
 //(skip constant variables for type, action definition)
+
 const addToDo = createAction("ADD");
 const deleteToDo = createAction("DELETE");
-
-const storage = JSON.parse(localStorage.getItem("ToDoList")) || [];
+*****************************************************/
 
 // const reducer = (state = storage, action) => {
 //   switch (action.type) {
@@ -35,6 +70,7 @@ const storage = JSON.parse(localStorage.getItem("ToDoList")) || [];
 //   }
 // };
 
+/********************redux/toolkit********************
 /*
 It's okay to mutate the state with createReducer
 when you work with createReducer, you have two options
@@ -42,6 +78,7 @@ when you work with createReducer, you have two options
   2. you can mutate the state (in this case, we shouldn't return the state)
   (the state will not mutated, redux/toolkit and immer will do something for us under the hood)
 */
+/*
 const reducer = createReducer(storage, {
   [addToDo]: (state, action) => {
     state.unshift({ text: action.payload, id: Date.now() });
@@ -55,12 +92,14 @@ const reducer = createReducer(storage, {
     return filteredToDo;
   },
 });
+*****************************************************/
 
-const store = createStore(reducer);
+// const store = createStore(reducer);
 
-export const actionCreators = {
-  addToDo,
-  deleteToDo,
-};
+// configureStore function adds good defaults to the store setup
+// we can use it with redux devtool on chrome
 
-export default store;
+// export const actionCreators = {
+//   addToDo,
+//   deleteToDo,
+// };
